@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transportation Method</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <script defer src="{{ url_for('static', filename='script.js') }}"></script>
+</head>
+<body>
+    <div class="navbar">
+        <button class="toggle-btn" onclick="toggleNavbar()">☰</button>
+        <ul class="nav-links">
+            <li><a href="{{ url_for('home') }}">Mathematical Programming</a></li>
+            <li class="dropdown">
+                <a href="{{ url_for('linear_programming') }}" class="dropdown-btn">Linear Programming</a>
+                <ul class="dropdown-content">
+                    <li><a href="{{ url_for('graphical_method') }}">Graphical Method</a></li>
+                    <li><a href="{{ url_for('simplex_method') }}">Simplex Method</a></li>
+                    <li><a href="{{ url_for('transportation_method') }}">Transportation Method</a></li>
+                </ul>
+            </li>
+        </ul>
+        <button class="dark-mode-btn" onclick="toggleDarkMode()">🌙</button>
+    </div>
+
+    <div class="container">
+        <h1>Transportation Method</h1>
+        <p>The Transportation Method is used to solve problems involving the optimal allocation of resources.</p>
+
+        <h2>Try it!</h2>
+        <form method="POST">
+            <label for="matrix">Enter Cost Matrix:</label>
+            <textarea name="matrix" id="matrix" rows="4" placeholder="Enter cost matrix"></textarea>
+            
+            <button type="submit" class="btn">Solve</button>
+        </form>
+
+        {% if result %}
+        <h2>Solution:</h2>
+        <p>{{ result }}</p>
+        {% endif %}
+    </div>
+</body>
+</html>

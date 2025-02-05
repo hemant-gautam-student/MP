@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Graphical Method</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <script defer src="{{ url_for('static', filename='script.js') }}"></script>
+</head>
+<body>
+    <div class="navbar">
+        <button class="toggle-btn" onclick="toggleNavbar()">☰</button>
+        <ul class="nav-links">
+            <li><a href="{{ url_for('home') }}">Mathematical Programming</a></li>
+            <li class="dropdown">
+                <a href="{{ url_for('linear_programming') }}" class="dropdown-btn">Linear Programming</a>
+                <ul class="dropdown-content">
+                    <li><a href="{{ url_for('graphical_method') }}">Graphical Method</a></li><br>
+                    <li><a href="{{ url_for('simplex_method') }}">Simplex Method</a></li><br>
+                    <li><a href="{{ url_for('transportation_method') }}">Transportation Method</a></li>
+                </ul>
+            </li>
+        </ul>
+        <button class="dark-mode-btn" onclick="toggleDarkMode()">🌙</button>
+    </div>
+
+    <div class="container">
+        <h1>Graphical Method</h1>
+        <p>The Graphical Method is used to solve linear programming problems with two variables.</p>
+        
+        <h2>Try it!</h2>
+        <form method="POST">
+            <label for="equations">Enter Constraints:</label>
+            <textarea name="equations" id="equations" rows="4" placeholder="e.g., x + y ≤ 5"></textarea>
+            
+            <label for="objective">Enter Objective Function:</label>
+            <input type="text" id="objective" name="objective" placeholder="e.g., Max Z = 3x + 2y">
+            
+            <button type="submit" class="btn">Solve</button>
+        </form>
+
+        {% if result %}
+        <h2>Solution:</h2>
+        <img src="{{ url_for('static', filename='graph.png') }}" alt="Graphical Solution">
+        {% endif %}
+    </div>
+</body>
+</html>
