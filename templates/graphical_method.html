@@ -3,9 +3,226 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Graphical Method</title>
+    <title>Mathematical Programming - Graphical Method</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
     <script defer src="{{ url_for('static', filename='script.js') }}"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 0;
+            background-color: #f9f9f9;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            font-size: 20px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        label {
+            font-weight: bold;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-inline {
+            display: flex;
+            gap: 10px;
+        }
+
+        select, input[type="number"], input[type="text"] {
+            padding: 8px;
+            width: 100%;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .constraints {
+            margin-bottom: 20px;
+        }
+
+        .constraint {
+            margin-bottom: 15px;
+        }
+
+        .buttons {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button.graph {
+            background-color: #007bff;
+            color: #fff;
+        }
+
+        button.reset {
+            background-color: #ddd;
+        }
+
+        .constraint-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 10px;
+        }
+
+        .constraint-buttons button {
+            width: 40px;
+            height: 40px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .constraint-buttons .add {
+            background-color: #28a745;
+            color: #fff;
+        }
+
+        .constraint-buttons .remove {
+            background-color: #dc3545;
+            color: #fff;
+        }
+
+        .non-negativity {
+            text-align: center;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: black;
+            padding: 10px 20px;
+            color: white;
+        }
+
+        .navbar .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 15px;
+        }
+
+        .navbar .nav-links a {
+            color: white;
+            text-decoration: none;
+        }
+
+        .dropdown-content {
+            display: none;
+            list-style: none;
+            position: absolute;
+            background-color: white;
+            color: black;
+            border: 1px solid #ddd;
+            padding: 10px;
+        }
+
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+    </style>
+    <script>
+        function addConstraint() {
+            const constraintsDiv = document.querySelector('.constraints');
+            const newConstraint = document.createElement('div');
+            newConstraint.classList.add('constraint');
+            newConstraint.innerHTML = `
+                <div class="form-inline">
+                    <input type="number" placeholder="Coefficient for X₁"> * X₁ +
+                    <input type="number" placeholder="Coefficient for X₂"> * X₂
+                    <select>
+                        <option>≤</option>
+                        <option>≥</option>
+                        <option>=</option>
+                    </select>
+                    <input type="number" placeholder="Value">
+                </div>
+            `;
+            constraintsDiv.appendChild(newConstraint);
+        }
+
+        function removeConstraint() {
+            const constraintsDiv = document.querySelector('.constraints');
+            if (constraintsDiv.children.length > 2) {
+                constraintsDiv.removeChild(constraintsDiv.lastChild);
+            }
+        }
+
+        function resetForm() {
+            document.querySelector('#objective').value = "Maximize";
+            document.querySelectorAll('input[type="number"]').forEach(input => input.value = "");
+            document.querySelectorAll('select').forEach(select => select.value = "≤");
+            const constraintsDiv = document.querySelector('.constraints');
+            while (constraintsDiv.children.length > 2) {
+                constraintsDiv.removeChild(constraintsDiv.lastChild);
+            }
+        }
+
+        function toggleNavbar() {
+            document.querySelector('.nav-links').classList.toggle('visible');
+        }
+
+        function submitForm(event) {
+            event.preventDefault();
+            const formData = {
+                objective: document.querySelector('#objective').value,
+                objectiveFunction: {
+                    x1: document.querySelector('.form-group input:nth-child(1)').value,
+                    x2: document.querySelector('.form-group input:nth-child(2)').value
+                },
+                constraints: Array.from(document.querySelectorAll('.constraint')).map(constraint => {
+                    const inputs = constraint.querySelectorAll('input');
+                    const select = constraint.querySelector('select');
+                    return {
+                        x1: inputs[0].value,
+                        x2: inputs[1].value,
+                        operator: select.value,
+                        value: inputs[2].value
+                    };
+                })
+            };
+
+            fetch('/submit', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(formData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Success:', data);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+    </script>
 </head>
 <body>
     <div class="navbar">
@@ -15,34 +232,61 @@
             <li class="dropdown">
                 <a href="{{ url_for('linear_programming') }}" class="dropdown-btn">Linear Programming</a>
                 <ul class="dropdown-content">
-                    <li><a href="{{ url_for('graphical_method') }}">Graphical Method</a></li><br>
-                    <li><a href="{{ url_for('simplex_method') }}">Simplex Method</a></li><br>
+                    <li><a href="{{ url_for('graphical_method') }}">Graphical Method</a></li>
+                    <li><a href="{{ url_for('simplex_method') }}">Simplex Method</a></li>
                     <li><a href="{{ url_for('transportation_method') }}">Transportation Method</a></li>
                 </ul>
             </li>
         </ul>
-        <button class="dark-mode-btn" onclick="toggleDarkMode()">🌙</button>
     </div>
-
+<br>
     <div class="container">
-        <h1>Graphical Method</h1>
-        <p>The Graphical Method is used to solve linear programming problems with two variables.</p>
-        
-        <h2>Try it!</h2>
-        <form method="POST">
-            <label for="equations">Enter Constraints:</label>
-            <textarea name="equations" id="equations" rows="4" placeholder="e.g., x + y ≤ 5"></textarea>
-            
-            <label for="objective">Enter Objective Function:</label>
-            <input type="text" id="objective" name="objective" placeholder="e.g., Max Z = 3x + 2y">
-            
-            <button type="submit" class="btn">Solve</button>
-        </form>
+        <h1>Graphical Method Calculator - Linear Programming</h1>
+        <form id="graph-form" onsubmit="submitForm(event)">
+            <div class="form-group">
+                <label for="objective">Objective:</label>
+                <select id="objective">
+                    <option>Maximize</option>
+                    <option>Minimize</option>
+                </select>
+            </div>
 
-        {% if result %}
-        <h2>Solution:</h2>
-        <img src="{{ url_for('static', filename='graph.png') }}" alt="Graphical Solution">
-        {% endif %}
+            <div class="form-group">
+                <label>Objective Function:</label>
+                <div class="form-inline">
+                    <input type="number" placeholder="Coefficient for X₁"> * X₁ +
+                    <input type="number" placeholder="Coefficient for X₂"> * X₂
+                </div>
+            </div>
+
+            <div class="constraints">
+                <label>Constraints</label>
+                <div class="constraint">
+                    <div class="form-inline">
+                        <input type="number" placeholder="Coefficient for X₁"> * X₁ +
+                        <input type="number" placeholder="Coefficient for X₂"> * X₂
+                        <select>
+                            <option>≤</option>
+                            <option>≥</option>
+                            <option>=</option>
+                        </select>
+                        <input type="number" placeholder="Value">
+                    </div>
+                </div>
+            </div>
+
+            <div class="constraint-buttons">
+                <button type="button" class="add" onclick="addConstraint()">+</button>
+                <button type="button" class="remove" onclick="removeConstraint()">-</button>
+            </div>
+
+            <p class="non-negativity">X₁, X₂ ≥ 0</p>
+
+            <div class="buttons">
+                <button type="submit" class="graph">Graph</button>
+                <button type="button" class="reset" onclick="resetForm()">Reset</button>
+            </div>
+        </form>
     </div>
 </body>
 </html>

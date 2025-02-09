@@ -1,8 +1,12 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, jsonify
 import numpy as np
 import matplotlib.pyplot as plt
 from io import BytesIO
 import base64
+import re
+
+from Codes.LP_Graphical import solve_linear_program
+from Codes.Simplex_Method import simplex
 
 app = Flask(__name__)
 
@@ -16,6 +20,7 @@ def home():
 def linear_programming():
     return render_template("linear_programming.html")
 
+
 # Graphical Method Page
 @app.route("/graphical-method", methods=["GET", "POST"])
 def graphical_method():
@@ -23,29 +28,70 @@ def graphical_method():
         equations = request.form.get("equations")
         objective = request.form.get("objective")
 
-        # Dummy solver for demonstration (replace with an actual solver)
-        x_vals = np.linspace(0, 10, 100)
-        y_vals = 10 - x_vals  # Example constraint line
-
-        # Plot graph
-        plt.figure(figsize=(6, 6))
-        plt.plot(x_vals, y_vals, label="x + y ≤ 10")
-        plt.fill_between(x_vals, y_vals, 10, color='gray', alpha=0.3)
-        plt.xlabel("X")
-        plt.ylabel("Y")
-        plt.title("Feasible Region")
-        plt.legend()
-        
-        # Save image in memory
-        buffer = BytesIO()
-        plt.savefig(buffer, format="png")
-        buffer.seek(0)
-        img_str = base64.b64encode(buffer.getvalue()).decode("utf-8")
-        plt.close()
-
-        return render_template("graphical_method.html", result=img_str)
-
     return render_template("graphical_method.html")
+
+
+@app.route("/submit", methods=["POST"])
+def graphical_method1():
+    # Check if the request is JSON
+    if request.is_json:
+        data = request.get_json()  # Parse JSON data
+        print(data)
+        c = []
+        A = []
+        b= []
+
+        c.append(int(data['objectiveFunction']['x1']))
+        c.append(int(data['objectiveFunction']['x2']))
+
+        for constraint in data['constraints']:
+            alist = []
+
+            alist.append(int(constraint['x1']))
+            alist.append(int(constraint['x2']))
+            A.append(alist)
+            b.append(int(constraint['value']))
+        A.append([-1, 0])
+        A.append([0, -1])
+        b.append(0)
+        b.append(0)
+        print(f"Parsed Data: c: {c}, A: {A}, b: {b}")
+
+        return solve_linear_program(c, A, b)
+        # return jsonify({
+        #     "message": "Data received successfully",
+        #     "data": data
+        # }), 200
+
+
+@app.route("/solve", methods=["POST"])
+def simplex_method1():
+    # Check if the request is JSON
+    if request.is_json:
+        data = request.get_json()  # Parse JSON data
+        print(data)
+        c = []
+        A = []
+        b = []
+        c.extend(map(int, data['objectiveFunction']))
+
+        for constraint in data['constraints']:
+            alist = []
+            alist.extend(map(int, constraint['coefficients']))
+            A.append(alist)
+            b.append(int(constraint['value']))
+        print(f"Parsed Data: c: {c}, A: {A}, b: {b}")
+
+        # return simplex(np.array(c), np.array(A), np.array(b))
+        # Solve using the simplex method
+        solution, optimal_value = simplex(np.array(c), np.array(A), np.array(b))
+
+        # Return solution and optimal value
+        return jsonify({
+            "solution": solution.tolist(),
+            "optimalValue": optimal_value
+        })
+
 
 # Simplex Method Page
 @app.route("/simplex-method", methods=["GET", "POST"])
@@ -56,6 +102,7 @@ def simplex_method():
         result = "Optimal Solution: x = 3, y = 5, Z = 25"
     return render_template("simplex_method.html", result=result)
 
+
 # Transportation Method Page
 @app.route("/transportation-method", methods=["GET", "POST"])
 def transportation_method():
@@ -64,6 +111,7 @@ def transportation_method():
         # Dummy result for now (implement Transportation logic)
         result = "Optimal Transportation Cost: 120"
     return render_template("transportation_method.html", result=result)
+
 
 if __name__ == "__main__":
     app.run(debug=True)
