@@ -83,9 +83,162 @@
         button.reset {
             background-color: #ddd;
         }
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: black;
+            padding: 10px 20px;
+            color: white;
+        }
+
+        .navbar .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 15px;
+        }
+
+        .navbar .nav-links a {
+            color: white;
+            text-decoration: none;
+        }
+
+<!--        .dropdown-content {-->
+<!--            display: none;-->
+<!--            list-style: none;-->
+<!--            position: absolute;-->
+<!--            background-color: black;-->
+<!--            color: white;-->
+<!--            border: 1px solid #ddd;-->
+<!--            padding: 10px;-->
+<!--        }-->
+
+<!--        .dropdown:hover .dropdown-content {-->
+<!--            display: block;-->
+<!--        }-->
+
+.dropdown-content {
+    display: none;
+    list-style: none;
+    padding-left: 20px;
+    background-color: #444;
+    position: relative;
+    z-index: 100;
+}
+
+/* Click-based activation */
+.dropdown.active .dropdown-content {
+    display: block;
+}
+
+
+        /* Sidebar Navbar */
+        .sidebar {
+            width: 250px;
+            height: 100vh;
+            background-color: #333;
+            color: white;
+            position: fixed;
+            left: -250px;
+            top: 0;
+            transition: all 0.3s ease-in-out;
+            padding-top: 20px;
+            overflow: visible; /* ✅ Now dropdown remains visible */
+        }
+
+        .sidebar.open {
+            left: 0;
+        }
+
+        .sidebar ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .sidebar ul li {
+            padding: 15px;
+            text-align: left;
+        }
+
+        .sidebar ul li a {
+            color: white;
+            text-decoration: none;
+            display: block;
+            padding: 10px;
+        }
+
+        .sidebar ul li a:hover {
+            background-color: #575757;
+        }
+
+        .dropdown-content {
+            display: none;
+            list-style: none;
+            padding-left: 20px;
+        }
+
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+
+        /* Toggle Button */
+        .toggle-btn {
+            position: fixed;
+            left: 10px;
+            top: 10px;
+            font-size: 20px;
+            background: #333;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            cursor: pointer;
+            z-index: 1000;
+            transition: 0.3s;
+        }
+
+        .toggle-btn:hover {
+            background: #575757;
+        }
+
+         /* Header */
+        .header {
+            width: 100%;
+            background-color: black;
+            color: white;
+            text-align: center;
+            padding: 15px 0;
+            font-size: 24px;
+            font-weight: bold;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+        }
     </style>
 </head>
 <body>
+<div class="header">Mathematical Programming</div>
+    <!-- Sidebar Navbar -->
+<div class="sidebar" id="sidebar">
+        <br>
+        <br>
+        <ul>
+            <li><a href="{{ url_for('home') }}">Home</a></li>
+            <li class="dropdown"><a href="#" onclick="toggleDropdown(event)">Linear Programming ▾</a>
+                <ul class="dropdown-content">
+                    <li><a href="{{ url_for('graphical_method') }}">Graphical Method</a></li>
+                    <li><a href="{{ url_for('simplex_method') }}">Simplex Method</a></li>
+                    <li><a href="{{ url_for('transportation_method') }}">Transportation Method</a></li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+
+    <!-- Toggle Button -->
+    <button class="toggle-btn" onclick="toggleNavbar()">☰</button>
+<br>
     <div class="container">
         <h1>Simplex Method Calculator</h1>
         <div id="setup-form">
@@ -130,6 +283,22 @@
     </div>
 
     <script>
+            function toggleNavbar() {
+                var sidebar = document.getElementById("sidebar");
+
+                if (sidebar.classList.contains("open")) {
+                    sidebar.classList.remove("open");
+                } else {
+                    sidebar.classList.add("open");
+                }
+            }
+
+            function toggleDropdown(event) {
+            event.preventDefault(); // Prevents page jump
+            var dropdown = event.target.closest(".dropdown");
+            dropdown.classList.toggle("active"); // Adds/removes "active" class to show/hide dropdown
+        }
+
         function resetForm() {
             document.getElementById('setup-form').classList.remove('hidden');
             document.getElementById('calculation-form').classList.add('hidden');

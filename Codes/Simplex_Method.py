@@ -65,17 +65,17 @@ def simplex(c, A, b):
     return solution[:num_variables], optimal_value
 
 
+
 # Example usage
 if __name__ == "__main__":
-    # c = np.array([9,10,7])  # Coefficients of the objective function
-    # A = np.array([
-    #     [1,3,2],
-    #     [4,1,3],
-    #    [2, 4, 1]
-    # ])  # Coefficient matrix of constraints
-    # b = np.array([12,16,14])  # Right-hand side values of constraints
+    c = np.array([9,10,7])  # Coefficients of the objective function
+    A = np.array([
+        [1,3,2],
+        [4,1,3],
+       [2, 4, 1]
+    ])  # Coefficient matrix of constraints
+    b = np.array([12,16,14])  # Right-hand side values of constraints
 
-    # solution, optimal_value = simplex(c, A, b)
-    # print("Optimal Solution:", solution)
-    # print("Optimal Value:", optimal_value)
-    pass
+    solution, optimal_value = simplex(c, A, b)
+    print("Optimal Solution:", solution)
+    print("Optimal Value:", optimal_value)

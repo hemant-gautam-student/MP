@@ -1,6 +1,7 @@
 import numpy as np
 from scipy.optimize import linprog
 
+
 def solve_transportation_problem(cost_matrix, supply, demand):
     """
     Solves the transportation problem using linear programming.
@@ -10,9 +11,6 @@ def solve_transportation_problem(cost_matrix, supply, demand):
         supply (list): List of supply capacities for each source.
         demand (list): List of demand requirements for each destination.
 
-        
-
-        
     Returns:
         result: Dictionary with the solution, total cost, and status.
     """
@@ -40,8 +38,6 @@ def solve_transportation_problem(cost_matrix, supply, demand):
         b_eq.append(supply[i])
  
 
-
- 
     # Demand constraints (column-wise)
     for j in range(n):
         col_constraint = [0] * (m * n)
@@ -69,19 +65,19 @@ def solve_transportation_problem(cost_matrix, supply, demand):
         }
 
 # Example usage
-cost_matrix = [
-    [2, 3, 1],
-    [5, 4, 8],
-    [5, 6, 8]
-]
-supply = [20, 30, 25]
-demand = [10, 25, 40]
+# cost_matrix = [
+#     [2, 3, 1],
+#     [5, 4, 8],
+#     [5, 6, 8]
+# ]
+# supply = [20, 30, 25]
+# demand = [10, 25, 40]
+#
+# result = solve_transportation_problem(cost_matrix, supply, demand)
 
-result = solve_transportation_problem(cost_matrix, supply, demand)
-
-print("Optimal Transportation Plan:")
-print(result["solution"])
-print("Total Cost:")
-print(result["total_cost"])
-print("Status:")
-print(result["status"])
+# print("Optimal Transportation Plan:")
+# print(result["solution"])
+# print("Total Cost:")
+# print(result["total_cost"])
+# print("Status:")
+# print(result["status"])

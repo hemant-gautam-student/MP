@@ -3,17 +3,241 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Transportation Method</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
-    <script defer src="{{ url_for('static', filename='script.js') }}"></script>
+    <title>Transportation Problem Solver</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 0;
+            background-color: #f9f9f9;
+            text-align: center;
+        }
+
+        .container {
+            max-width: 700px;
+            margin: auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            font-size: 20px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        input[type="number"] {
+            padding: 8px;
+            font-size: 14px;
+            width: 60px;
+            margin: 5px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            text-align: center;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button.generate {
+            background-color: #007bff;
+            color: white;
+        }
+
+        button.reset {
+            background-color: #ddd;
+        }
+
+        .matrix-container {
+            margin-top: 20px;
+            display: none;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #f0f0f0;
+        }
+
+        .supply-needs {
+            font-weight: bold;
+            background-color: #f0f0f0;
+        }
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: black;
+            padding: 10px 20px;
+            color: white;
+        }
+
+        .navbar .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 15px;
+        }
+
+        .navbar .nav-links a {
+            color: white;
+            text-decoration: none;
+        }
+
+        .dropdown-content {
+            display: none;
+            list-style: none;
+            padding-left: 20px;
+            background-color: #444;
+            position: relative;
+            z-index: 100;
+        }
+
+        /* Click-based activation */
+        .dropdown.active .dropdown-content {
+            display: block;
+        }
+
+        /* Sidebar Navbar */
+        .sidebar {
+            width: 250px;
+            height: 100vh;
+            background-color: #333;
+            color: white;
+            position: fixed;
+            left: -250px;
+            top: 0;
+            transition: all 0.3s ease-in-out;
+            padding-top: 20px;
+        }
+
+        .sidebar.open {
+            left: 0;
+        }
+
+        .sidebar ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .sidebar ul li {
+            padding: 15px;
+            text-align: left;
+        }
+
+        .sidebar ul li a {
+            color: white;
+            text-decoration: none;
+            display: block;
+            padding: 10px;
+        }
+
+        .sidebar ul li a:hover {
+            background-color: #575757;
+        }
+
+        .dropdown-content {
+            display: none;
+            list-style: none;
+            padding-left: 20px;
+        }
+
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+
+        /* Toggle Button */
+        .toggle-btn {
+            position: fixed;
+            left: 10px;
+            top: 10px;
+            font-size: 20px;
+            background: #333;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            cursor: pointer;
+            z-index: 1000;
+            transition: 0.3s;
+        }
+
+        .toggle-btn:hover {
+            background: #575757;
+        }
+
+         /* Header */
+        .header {
+            width: 100%;
+            background-color: black;
+            color: white;
+            text-align: center;
+            padding: 15px 0;
+            font-size: 24px;
+            font-weight: bold;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+        }
+
+.hidden {
+            display: none;
+        }
+
+        #solution-container {
+            margin-top: 20px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            background: #f8f9fa;
+            text-align: center;
+        }
+
+        table {
+            margin: auto;
+            border-collapse: collapse;
+            width: 80%;
+        }
+
+        td, th {
+            padding: 10px;
+            border: 1px solid #ccc;
+        }
+
+    </style>
 </head>
 <body>
-    <div class="navbar">
-        <button class="toggle-btn" onclick="toggleNavbar()">☰</button>
-        <ul class="nav-links">
-            <li><a href="{{ url_for('home') }}">Mathematical Programming</a></li>
+<div class="header">Mathematical Programming</div>
+    <!-- Sidebar Navbar -->
+<div class="sidebar" id="sidebar">
+        <br>
+        <br>
+        <ul>
+            <li><a href="{{ url_for('home') }}">Home</a></li>
             <li class="dropdown">
-                <a href="{{ url_for('linear_programming') }}" class="dropdown-btn">Linear Programming</a>
+                <a href="#">Linear Programming ▾</a>
                 <ul class="dropdown-content">
                     <li><a href="{{ url_for('graphical_method') }}">Graphical Method</a></li>
                     <li><a href="{{ url_for('simplex_method') }}">Simplex Method</a></li>
@@ -21,25 +245,167 @@
                 </ul>
             </li>
         </ul>
-        <button class="dark-mode-btn" onclick="toggleDarkMode()">🌙</button>
     </div>
+
+    <!-- Toggle Button -->
+    <button class="toggle-btn" onclick="toggleNavbar()">☰</button>
+<br>
 
     <div class="container">
-        <h1>Transportation Method</h1>
-        <p>The Transportation Method is used to solve problems involving the optimal allocation of resources.</p>
+        <h1>Transportation Problem Solver</h1>
 
-        <h2>Try it!</h2>
-        <form method="POST">
-            <label for="matrix">Enter Cost Matrix:</label>
-            <textarea name="matrix" id="matrix" rows="4" placeholder="Enter cost matrix"></textarea>
-            
-            <button type="submit" class="btn">Solve</button>
-        </form>
+        <div id="setup-form">
+            <div class="form-group">
+                <label for="sources">Number of Suppliers:</label>
+                <input type="number" id="sources" min="1" max="10" value="3">
+            </div>
+            <div class="form-group">
+                <label for="destinations">Number of Consumers:</label>
+                <input type="number" id="destinations" min="1" max="10" value="3">
+            </div>
+            <div class="form-group">
+                <button class="generate" onclick="generateMatrix()">Generate Matrix</button>
+                <button class="reset" onclick="resetForm()">Reset</button>
+            </div>
+        </div>
 
-        {% if result %}
-        <h2>Solution:</h2>
-        <p>{{ result }}</p>
-        {% endif %}
+        <div id="matrix-container" class="matrix-container">
+            <h2>Input Transportation Costs</h2>
+            <table id="matrix">
+                <!-- Matrix will be generated here -->
+            </table>
+            <br>
+            <button class="generate" onclick="submitData()">Solve</button>
+        </div>
+
+     <div id="solution-container" class="hidden"></div>
     </div>
+
+    <script>
+    function toggleNavbar() {
+            var sidebar = document.getElementById("sidebar");
+            var mainContent = document.getElementById("main-content");
+
+            if (sidebar.classList.contains("open")) {
+                sidebar.classList.remove("open");
+                mainContent.classList.remove("open");
+            } else {
+                sidebar.classList.add("open");
+                mainContent.classList.add("open");
+            }
+        }
+
+        function generateMatrix() {
+            const sources = parseInt(document.getElementById("sources").value);
+            const destinations = parseInt(document.getElementById("destinations").value);
+            const matrixContainer = document.getElementById("matrix-container");
+            const matrixTable = document.getElementById("matrix");
+
+            matrixTable.innerHTML = ''; // Clear previous table
+            matrixContainer.style.display = "block";
+
+            let tableHTML = '<tr><th>Supplier</th>';
+
+            // Generate consumer headers
+            for (let j = 1; j <= destinations; j++) {
+                tableHTML += `<th>B${j}</th>`;
+            }
+            tableHTML += '<th>Supply</th></tr>';
+
+            // Generate input fields for each supplier row
+            for (let i = 1; i <= sources; i++) {
+                tableHTML += `<tr><td>A${i}</td>`;
+                for (let j = 1; j <= destinations; j++) {
+                    tableHTML += `<td><input type="number" id="cost-${i}-${j}" placeholder=""></td>`;
+                }
+                tableHTML += `<td><input type="number" id="supply-${i}" placeholder=""></td></tr>`;
+            }
+
+            // Generate demand row
+            tableHTML += `<tr><td class="supply-needs">Customer needs</td>`;
+            for (let j = 1; j <= destinations; j++) {
+                tableHTML += `<td><input type="number" id="demand-${j}" placeholder=""></td>`;
+            }
+            tableHTML += `<td class="supply-needs">-</td></tr>`;
+
+            matrixTable.innerHTML = tableHTML;
+        }
+
+        function resetForm() {
+            document.getElementById("sources").value = 3;
+            document.getElementById("destinations").value = 3;
+            document.getElementById("matrix-container").style.display = "none";
+            document.getElementById("results-container").style.display = "none";
+        }
+
+        function submitData() {
+            const sources = parseInt(document.getElementById("sources").value);
+            const destinations = parseInt(document.getElementById("destinations").value);
+
+            let data = {
+                costs: [],
+                supply: [],
+                demand: []
+            };
+
+            // Extract transportation costs
+            for (let i = 1; i <= sources; i++) {
+                let row = [];
+                for (let j = 1; j <= destinations; j++) {
+                    row.push(parseFloat(document.getElementById(`cost-${i}-${j}`).value) || 0);
+                }
+                data.costs.push(row);
+            }
+
+            // Extract supply values
+            for (let i = 1; i <= sources; i++) {
+                data.supply.push(parseFloat(document.getElementById(`supply-${i}`).value) || 0);
+            }
+
+            // Extract demand values
+            for (let j = 1; j <= destinations; j++) {
+                data.demand.push(parseFloat(document.getElementById(`demand-${j}`).value) || 0);
+            }
+
+            fetch('/solve-transportation', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(result => {
+                console.log("Result:", result);  // ✅ Debugging: Print result to console
+
+            // Ensure the solution container is visible
+            document.getElementById('solution-container').classList.remove('hidden');
+
+            // Display solution as a table
+            let solutionTable = '<h2>Solution</h2><table border="1" cellpadding="5">';
+            result.solution.forEach(row => {
+                solutionTable += '<tr>';
+                row.forEach(value => {
+                    solutionTable += `<td>${value}</td>`;
+                });
+                solutionTable += '</tr>';
+            });
+            solutionTable += '</table>';
+
+            // Display total cost
+            let totalCost = `<h3>Total Cost: ${result.total_cost}</h3>`;
+
+            // ✅ Fix: Display status message
+            let statusMessage = `<h3>Status: ${result.status}</h3>`;
+
+            // ✅ Append results to HTML without opening a new page
+            document.getElementById('solution-container').innerHTML = solutionTable + totalCost + statusMessage;
+
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred while solving the problem.');
+            });
+        }
+    </script>
+
 </body>
 </html>

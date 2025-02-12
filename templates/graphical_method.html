@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mathematical Programming - Graphical Method</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
-    <script defer src="{{ url_for('static', filename='script.js') }}"></script>
+<!--    <script defer src="{{ url_for('static', filename='script.js') }}"></script>-->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <style>
         body {
@@ -132,113 +132,156 @@
             text-decoration: none;
         }
 
+<!--        .dropdown-content {-->
+<!--            display: none;-->
+<!--            list-style: none;-->
+<!--            position: absolute;-->
+<!--            background-color: white;-->
+<!--            color: black;-->
+<!--            border: 1px solid #ddd;-->
+<!--            padding: 10px;-->
+<!--        }-->
+
+<!--        .dropdown:hover .dropdown-content {-->
+<!--            display: block;-->
+<!--        }-->
+
+<!--        .dropdown-content {-->
+<!--            display: none;-->
+<!--            list-style: none;-->
+<!--            position: absolute;-->
+<!--            background-color: black;-->
+<!--            color: white;-->
+<!--            border: 1px solid #ddd;-->
+<!--            padding: 10px;-->
+<!--        }-->
+
+<!--        .dropdown:hover .dropdown-content {-->
+<!--            display: block;-->
+<!--        }-->
+
+        /* Single dropdown styling */
         .dropdown-content {
             display: none;
             list-style: none;
-            position: absolute;
-            background-color: white;
-            color: black;
-            border: 1px solid #ddd;
+            padding-left: 20px;
+            background-color: #444;
+            position: relative;
+            z-index: 100;
+        }
+
+        /* When .active class is added, dropdown is visible */
+        .dropdown.active .dropdown-content {
+            display: block;
+        }
+
+
+        /* Sidebar Navbar */
+        .sidebar {
+            width: 250px;
+            height: 100vh;
+            background-color: #333;
+            color: white;
+            position: fixed;
+            left: -250px;
+            top: 0;
+            transition: all 0.3s ease-in-out;
+            padding-top: 20px;
+            overflow: visible; /* ✅ Now dropdown remains visible */
+        }
+
+
+        .sidebar.open {
+            left: 0;
+        }
+
+        .sidebar ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .sidebar ul li {
+            padding: 15px;
+            text-align: left;
+        }
+
+        .sidebar ul li a {
+            color: white;
+            text-decoration: none;
+            display: block;
             padding: 10px;
+        }
+
+        .sidebar ul li a:hover {
+            background-color: #575757;
+        }
+
+        .dropdown-content {
+            display: none;
+            list-style: none;
+            padding-left: 20px;
         }
 
         .dropdown:hover .dropdown-content {
             display: block;
         }
+
+        /* Toggle Button */
+        .toggle-btn {
+            position: fixed;
+            left: 10px;
+            top: 10px;
+            font-size: 20px;
+            background: #333;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            cursor: pointer;
+            z-index: 1000;
+            transition: 0.3s;
+        }
+
+        .toggle-btn:hover {
+            background: #575757;
+        }
+
+         /* Header */
+        .header {
+            width: 100%;
+            background-color: black;
+            color: white;
+            text-align: center;
+            padding: 15px 0;
+            font-size: 24px;
+            font-weight: bold;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+        }
     </style>
-    <script>
-        function addConstraint() {
-            const constraintsDiv = document.querySelector('.constraints');
-            const newConstraint = document.createElement('div');
-            newConstraint.classList.add('constraint');
-            newConstraint.innerHTML = `
-                <div class="form-inline">
-                    <input type="number" placeholder="Coefficient for X₁"> * X₁ +
-                    <input type="number" placeholder="Coefficient for X₂"> * X₂
-                    <select>
-                        <option>≤</option>
-                        <option>≥</option>
-                        <option>=</option>
-                    </select>
-                    <input type="number" placeholder="Value">
-                </div>
-            `;
-            constraintsDiv.appendChild(newConstraint);
-        }
-
-        function removeConstraint() {
-            const constraintsDiv = document.querySelector('.constraints');
-            if (constraintsDiv.children.length > 2) {
-                constraintsDiv.removeChild(constraintsDiv.lastChild);
-            }
-        }
-
-        function resetForm() {
-            document.querySelector('#objective').value = "Maximize";
-            document.querySelectorAll('input[type="number"]').forEach(input => input.value = "");
-            document.querySelectorAll('select').forEach(select => select.value = "≤");
-            const constraintsDiv = document.querySelector('.constraints');
-            while (constraintsDiv.children.length > 2) {
-                constraintsDiv.removeChild(constraintsDiv.lastChild);
-            }
-        }
-
-        function toggleNavbar() {
-            document.querySelector('.nav-links').classList.toggle('visible');
-        }
-
-        function submitForm(event) {
-            event.preventDefault();
-            const formData = {
-                objective: document.querySelector('#objective').value,
-                objectiveFunction: {
-                    x1: document.querySelector('.form-group input:nth-child(1)').value,
-                    x2: document.querySelector('.form-group input:nth-child(2)').value
-                },
-                constraints: Array.from(document.querySelectorAll('.constraint')).map(constraint => {
-                    const inputs = constraint.querySelectorAll('input');
-                    const select = constraint.querySelector('select');
-                    return {
-                        x1: inputs[0].value,
-                        x2: inputs[1].value,
-                        operator: select.value,
-                        value: inputs[2].value
-                    };
-                })
-            };
-
-            fetch('/submit', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(formData)
-            })
-            .then(response => response.json())
-            .then(data => {
-                console.log('Success:', data);
-            })
-            .catch(error => {
-                console.error('Error:', error);
-            });
-        }
-    </script>
 </head>
 <body>
-    <div class="navbar">
-        <button class="toggle-btn" onclick="toggleNavbar()">☰</button>
-        <ul class="nav-links">
-            <li><a href="{{ url_for('home') }}">Mathematical Programming</a></li>
-            <li class="dropdown">
-                <a href="{{ url_for('linear_programming') }}" class="dropdown-btn">Linear Programming</a>
-                <ul class="dropdown-content">
-                    <li><a href="{{ url_for('graphical_method') }}">Graphical Method</a></li>
-                    <li><a href="{{ url_for('simplex_method') }}">Simplex Method</a></li>
-                    <li><a href="{{ url_for('transportation_method') }}">Transportation Method</a></li>
-                </ul>
+<div class="header">Mathematical Programming</div>
+    <!-- Sidebar Navbar -->
+<div class="sidebar" id="sidebar">
+        <br>
+        <br>
+        <ul>
+            <li><a href="{{ url_for('home') }}">Home</a></li>
+            <li class="dropdown"><a href="#" onclick="toggleDropdown(event)">Linear Programming ▾</a>
+        <ul class="dropdown-content">
+            <li><a href="{{ url_for('graphical_method') }}">Graphical Method</a></li>
+            <li><a href="{{ url_for('simplex_method') }}">Simplex Method</a></li>
+            <li><a href="{{ url_for('transportation_method') }}">Transportation Method</a></li>
+        </ul>
             </li>
         </ul>
     </div>
+
+    <!-- Toggle Button -->
+    <button class="toggle-btn" onclick="toggleNavbar()">☰</button>
 <br>
     <div class="container">
         <h1>Graphical Method Calculator - Linear Programming</h1>
@@ -287,6 +330,104 @@
                 <button type="button" class="reset" onclick="resetForm()">Reset</button>
             </div>
         </form>
+
+       <div id="graph-container" style="text-align: center; margin-top: 20px;">
+        <!-- Graph will be displayed here -->
+        </div>
     </div>
+    <script>
+        function toggleNavbar() {
+            var sidebar = document.getElementById("sidebar");
+
+            if (sidebar.classList.contains("open")) {
+                sidebar.classList.remove("open");
+            } else {
+                sidebar.classList.add("open");
+            }
+        }
+
+        function toggleDropdown(event) {
+            event.preventDefault(); // Prevents page jump
+            var dropdown = event.target.closest(".dropdown");
+            dropdown.classList.toggle("active"); // Adds/removes "active" class to show/hide dropdown
+        }
+
+
+        function addConstraint() {
+            const constraintsDiv = document.querySelector('.constraints');
+            const newConstraint = document.createElement('div');
+            newConstraint.classList.add('constraint');
+            newConstraint.innerHTML = `
+                <div class="form-inline">
+                    <input type="number" placeholder="Coefficient for X₁"> * X₁ +
+                    <input type="number" placeholder="Coefficient for X₂"> * X₂
+                    <select>
+                        <option>≤</option>
+                        <option>≥</option>
+                        <option>=</option>
+                    </select>
+                    <input type="number" placeholder="Value">
+                </div>
+            `;
+            constraintsDiv.appendChild(newConstraint);
+        }
+
+        function removeConstraint() {
+            const constraintsDiv = document.querySelector('.constraints');
+            if (constraintsDiv.children.length > 2) {
+                constraintsDiv.removeChild(constraintsDiv.lastChild);
+            }
+        }
+
+        function resetForm() {
+            document.querySelector('#objective').value = "Maximize";
+            document.querySelectorAll('input[type="number"]').forEach(input => input.value = "");
+            document.querySelectorAll('select').forEach(select => select.value = "≤");
+            const constraintsDiv = document.querySelector('.constraints');
+            while (constraintsDiv.children.length > 2) {
+                constraintsDiv.removeChild(constraintsDiv.lastChild);
+            }
+        }
+
+        function submitForm(event) {
+            event.preventDefault();
+            const formData = {
+                objective: document.querySelector('#objective').value,
+                objectiveFunction: {
+                    x1: document.querySelector('.form-group input:nth-child(1)').value,
+                    x2: document.querySelector('.form-group input:nth-child(2)').value
+                },
+                constraints: Array.from(document.querySelectorAll('.constraint')).map(constraint => {
+                    const inputs = constraint.querySelectorAll('input');
+                    const select = constraint.querySelector('select');
+                    return {
+                        x1: inputs[0].value,
+                        x2: inputs[1].value,
+                        operator: select.value,
+                        value: inputs[2].value
+                    };
+                })
+            };
+
+            fetch('/submit', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(formData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log("Graph Data Received:", data);
+
+            // ✅ Update Graph Image
+            document.getElementById("graph-container").innerHTML = `<img src="data:image/png;base64,${data.graph}" alt="Graph" style="max-width:100%;"/>`;
+
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+    </script>
 </body>
 </html>

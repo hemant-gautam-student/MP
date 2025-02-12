@@ -5,27 +5,126 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mathematical Programming</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
-    <script defer src="{{ url_for('static', filename='script.js') }}"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <style>
+        /* Sidebar */
+        .sidebar {
+            width: 250px;
+            height: 100vh;
+            background-color: #333;
+            color: white;
+            position: fixed;
+            left: -250px;
+            top: 50px;
+            transition: all 0.3s ease-in-out;
+            padding-top: 20px;
+            overflow: visible; /* Ensures dropdown is visible */
+        }
+
+        .sidebar.open {
+            left: 0;
+        }
+
+        .sidebar ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .sidebar ul li {
+            padding: 15px;
+            text-align: left;
+            position: relative; /* Needed for dropdown */
+        }
+
+        .sidebar ul li a {
+            color: white;
+            text-decoration: none;
+            display: block;
+            padding: 10px;
+        }
+
+        .sidebar ul li a:hover {
+            background-color: #575757;
+        }
+
+        /* Dropdown */
+        .dropdown-content {
+            display: none;
+            list-style: none;
+            padding-left: 20px;
+            background-color: #444;
+            position: relative; /* Ensures correct positioning */
+            z-index: 100;
+        }
+
+        .dropdown.active .dropdown-content {
+            display: block;
+        }
+
+        /* Toggle Button */
+        .toggle-btn {
+            position: fixed;
+            left: 10px;
+            top: 10px;
+            font-size: 20px;
+            background: #333;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            cursor: pointer;
+            z-index: 1000;
+            transition: 0.3s;
+        }
+
+        .toggle-btn:hover {
+            background: #575757;
+        }
+
+        /* Header */
+        .header {
+            width: 100%;
+            background-color: black;
+            color: white;
+            text-align: center;
+            padding: 15px 0;
+            font-size: 24px;
+            font-weight: bold;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+        }
+    </style>
 </head>
 <body>
-    <div class="navbar">
-        <button class="toggle-btn" onclick="toggleNavbar()">☰</button>
-        <ul class="nav-links">
-            <li><a href="{{ url_for('home') }}">Mathematical Programming</a></li>
+
+    <!-- Header -->
+    <div class="header">Mathematical Programming</div>
+
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <ul>
+            <li><a href="{{ url_for('home') }}">Home</a></li>
             <li class="dropdown">
-                <a href="{{ url_for('linear_programming') }}" class="dropdown-btn">Linear Programming</a>
-                <ul class="dropdown-content"><br>
-                    <li><a href="{{ url_for('graphical_method') }}">Graphical Method</a></li><br>
-                    <li><a href="{{ url_for('simplex_method') }}">Simplex Method</a></li><br>
+                <a href="#" onclick="toggleDropdown(event)">Linear Programming ▾</a>
+                <ul class="dropdown-content">
+                    <li><a href="{{ url_for('graphical_method') }}">Graphical Method</a></li>
+                    <li><a href="{{ url_for('simplex_method') }}">Simplex Method</a></li>
                     <li><a href="{{ url_for('transportation_method') }}">Transportation Method</a></li>
                 </ul>
             </li>
         </ul>
-        <button class="dark-mode-btn" onclick="toggleDarkMode()">🌙</button>
     </div>
 
-    <div class="container">
+    <!-- Toggle Button -->
+    <button class="toggle-btn" onclick="toggleNavbar()">☰</button>
+    <br>
+
+    <!-- Main Content -->
+    
+    <div class="container" id="main-content" align-items = 'center'>
         <h1>Mathematical Programming</h1>
         <p>Mathematical programming is a branch of optimization that focuses on finding the best possible solutions to problems within given constraints.</p>
 
@@ -41,5 +140,23 @@
         <p>Linear programming (LP) is a mathematical method for determining the best possible outcome given a set of constraints.</p>
         <a href="{{ url_for('linear_programming') }}" class="btn">Learn More</a>
     </div>
+
+    <script>
+        function toggleNavbar() {
+            var sidebar = document.getElementById("sidebar");
+            if (sidebar.classList.contains("open")) {
+                sidebar.classList.remove("open");
+            } else {
+                sidebar.classList.add("open");
+            }
+        }
+
+        function toggleDropdown(event) {
+            event.preventDefault(); // Prevents page jump
+            var dropdown = event.target.closest(".dropdown");
+            dropdown.classList.toggle("active");
+        }
+    </script>
+
 </body>
 </html>

@@ -1,7 +1,11 @@
+import base64
+import io
+
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.patches import Polygon
 from scipy.spatial import ConvexHull
+
 
 def plot_constraints(constraints, bounds, feasible_region=None, optimal_vertex=None):
     """Plots the constraints, feasible region, and optimal solution."""
@@ -39,7 +43,18 @@ def plot_constraints(constraints, bounds, feasible_region=None, optimal_vertex=N
     plt.title("Linear Programming: Graphical Method")
     plt.legend()
     plt.grid()
-    plt.show()
+    # plt.show()
+
+    # ✅ Convert plot to Base64 string
+    img = io.BytesIO()
+    plt.savefig(img, format='png', bbox_inches='tight')  # Save figure to buffer
+    img.seek(0)  # Move to the beginning of the buffer
+    graph_url = base64.b64encode(img.getvalue()).decode('utf8')  # Convert to Base64
+    img.close()
+    plt.close()  # Close the plot to free memory
+
+    return graph_url  # ✅ Return Base64-encoded image
+
 
 def solve_linear_program(c, A, b):
     """Solve the linear programming problem and plot."""
@@ -74,13 +89,26 @@ def solve_linear_program(c, A, b):
         print("Optimal Value:", optimal_value)
 
         # Plot the constraints and feasible region
-        plot_constraints(constraints, bounds, feasible_region=feasible_vertices, optimal_vertex=optimal_vertex)
+        return plot_constraints(constraints, bounds, feasible_region=feasible_vertices, optimal_vertex=optimal_vertex)
     else:
         print("No feasible region found.")
 
-# # Example Inputs for the Given Problem
+# Example Inputs for the Given Problem
 # c = [5,4]  # Coefficients of the objective function Z = 50x + 18y
 # A = [[1, 2], [3, 1], [-1, 0], [0, -1]]  # Coefficients of the inequalities
 # b = [20, 30, 0, 0]  # Right-hand side values of the inequalities
+# Max z= 7x1+6x2
+# Subject to 2x1+4x2 <= 80
+# 3x1+2x2 <= 100
+# x1,x2>=0
 
+# c = [7, 6]
+# A = [[2, 4], [3, 2], [-1, 0], [0, -1]]
+# b = [80, 100, 0, 0]
+
+# c = [7, 6]  # Coefficients of the objective function Z = 7x1 + 6x2
+# A = [[2, 4], [3, 2], [-1, 0], [0, -1]]  # Coefficients of the inequalities
+# b = [80, 100, 0, 0]  # Right-hand side values of the inequalities
+#
+#
 # solve_linear_program(c, A, b)
