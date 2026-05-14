@@ -26,8 +26,33 @@ The application allows users to:
 - Dynamic constraint generation
 - Interactive graph rendering
 - Responsive sidebar navigation
-- Dark mode support
 - Real-time result rendering using AJAX & JSON APIs
+
+---
+
+## 📸 Screenshots
+
+### Home Dashboard
+
+![](screenshots/Home)
+
+---
+
+### Graphical Method Solver
+
+![](screenshots/MP%20-%20Graphical%20Method)
+
+---
+
+### Simplex Method Solver
+
+![](screenshots/MP%20-%20Simplex%20Method)
+
+---
+
+### Transportation Problem Solver
+
+![](screenshots/MP%20-%20Transportation%20Method)
 
 ---
 
@@ -67,6 +92,7 @@ hemant-gautam-student-mp/
 │   ├── styles.css
 │   └── script.js
 ├── templates/
+├── screenshots/
 └── README.md
 ```
 
