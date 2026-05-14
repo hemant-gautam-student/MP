@@ -34,25 +34,25 @@ The application allows users to:
 
 ### Home Dashboard
 
-![](screenshots/Home)
+![](screenshots/home.png)
 
 ---
 
 ### Graphical Method Solver
 
-![](screenshots/MP%20-%20Graphical%20Method)
+![](screenshots/graphical-method.png)
 
 ---
 
 ### Simplex Method Solver
 
-![](screenshots/MP%20-%20Simplex%20Method)
+![](screenshots/simplex-method.png)
 
 ---
 
 ### Transportation Problem Solver
 
-![](screenshots/MP%20-%20Transportation%20Method)
+![](screenshots/transportation-method.png)
 
 ---
 
