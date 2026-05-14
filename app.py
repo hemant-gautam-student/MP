@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for, jsonify
+from flask.typing import ResponseReturnValue
 import numpy as np
-import matplotlib.pyplot as plt
 from io import BytesIO
 import base64
 import re
@@ -14,19 +14,19 @@ app = Flask(__name__)
 
 # Home Page (Mathematical Programming)
 @app.route("/")
-def home():
+def home() -> ResponseReturnValue:
     return render_template("index.html")
 
 
 # Linear Programming Page
 @app.route("/linear-programming")
-def linear_programming():
+def linear_programming() -> ResponseReturnValue:
     return render_template("linear_programming.html")
 
 
 # Graphical Method Page
 @app.route("/graphical-method", methods=["GET", "POST"])
-def graphical_method():
+def graphical_method() -> ResponseReturnValue:
     if request.method == "POST":
         equations = request.form.get("equations")
         objective = request.form.get("objective")
@@ -35,7 +35,7 @@ def graphical_method():
 
 
 @app.route("/submit", methods=["POST"])
-def graphical_method1():
+def graphical_method1() -> ResponseReturnValue:
     # Check if the request is JSON
     if request.is_json:
         data = request.get_json()  # Parse JSON data
@@ -69,9 +69,11 @@ def graphical_method1():
 
         return jsonify({"graph": graph_image, "message": "Graph generated successfully"})
 
+    return jsonify({"error": "Request must be JSON"}), 400
+
 
 @app.route("/solve", methods=["POST"])
-def simplex_method1():
+def simplex_method1() -> ResponseReturnValue:
     # Check if the request is JSON
     if request.is_json:
         data = request.get_json()  # Parse JSON data
@@ -98,10 +100,12 @@ def simplex_method1():
             "optimalValue": optimal_value
         })
 
+    return jsonify({"error": "Request must be JSON"}), 400
+
 
 # Simplex Method Page
 @app.route("/simplex-method", methods=["GET", "POST"])
-def simplex_method():
+def simplex_method() -> ResponseReturnValue:
     result = None
     if request.method == "POST":
         # Dummy result for now (implement Simplex logic)
@@ -111,13 +115,13 @@ def simplex_method():
 
 # Transportation Method Page
 @app.route('/transportation_method', methods=["GET", 'POST'])
-def transportation_method():
+def transportation_method() -> ResponseReturnValue:
     result = None
     return render_template("transportation_method.html", result=result)
 
 
 @app.route("/solve-transportation", methods=["POST"])
-def solve_transportation1():
+def solve_transportation1() -> ResponseReturnValue:
     # Check if the request is JSON
     if request.is_json:
         data = request.get_json()  # Parse JSON data
@@ -142,6 +146,8 @@ def solve_transportation1():
             "total_cost": result["total_cost"],
             "status": result["status"]
         })
+
+    return jsonify({"error": "Request must be JSON"}), 400
 
 
 if __name__ == "__main__":
